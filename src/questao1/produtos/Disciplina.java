@@ -1,15 +1,17 @@
 package questao1.produtos;
 
-public class Disciplina extends Produto {
-    private double pctCumprido;
+import questao1.composite.IComponente;
+
+public class Disciplina extends Produto implements IComponente {
+    private int chCumprida;
 	private double preco;
     private int chTotal;
 
-    public Disciplina(String codigo, String nome, double pctCumprido, double preco, int chTotal) {
+    public Disciplina(String codigo, String nome, int chCumprida, double preco, int chTotal) {
         super(codigo, nome);
         this.setPreco(preco);
         this.setChTotal(chTotal);
-        this.setPctCumprido(pctCumprido);
+        this.setCHCumprida(chCumprida);
     }
 
     public Disciplina(String codigo, String nome) {
@@ -20,20 +22,15 @@ public class Disciplina extends Produto {
         super(produto);
         this.setPreco(produto.getPreco());
         this.setChTotal(produto.getChTotal());
-        this.setPctCumprido(produto.getPctCumprido());
+        this.setCHCumprida(produto.getCHCumprida());
     }
 
-    public double getPctCumprido() {
-        return this.pctCumprido;
+    public int getCHCumprida() {
+        return this.chCumprida;
     }
 
-    private void setPctCumprido(double pctCumprido) {
-        this.pctCumprido = pctCumprido;
-    }
-
-    public void avancar(double percentual) {
-        double pctResultante = this.pctCumprido + percentual;
-        this.setPctCumprido(pctResultante <= 100 ? pctResultante : 100);
+    private void setCHCumprida(int chCumprida) {
+        this.chCumprida = chCumprida;
     }
 
     public int getChTotal() {
@@ -42,6 +39,10 @@ public class Disciplina extends Produto {
 
     public void setChTotal(int chTotal) {
         this.chTotal = chTotal;
+    }
+
+    public double getPctChCumprida() {
+        return (this.chCumprida * 100) / this.chTotal;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class Disciplina extends Produto {
         return this.preco;
     }
 
-    public void setPreco(double preco) {
+    private void setPreco(double preco) {
         this.preco = preco;
     }
 

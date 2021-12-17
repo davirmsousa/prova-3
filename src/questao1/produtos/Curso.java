@@ -2,20 +2,20 @@ package questao1.produtos;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import questao1.composite.IComponente;
 import questao1.prototype.IPrototipavel;
 
-public class Curso extends Produto {
+public class Curso extends Produto implements IComponente {
 
-    private Collection<Disciplina> disciplinas;
+    private Collection<IComponente> componentes;
     private Collection<Livro> livros;
 
-    public Curso(String codigo, String nome, Collection<Disciplina> disciplinas, Collection<Livro> livros) {
+    public Curso(String codigo, String nome, Collection<Livro> livros, Collection<IComponente> componentes) {
         super(codigo, nome);
         this.livros = new ArrayList<Livro>(livros);
-        this.disciplinas = new ArrayList<Disciplina>(disciplinas);
+        this.componentes = new ArrayList<IComponente>(componentes);
     }
 
     public Curso(String codigo, String nome) {
@@ -25,19 +25,26 @@ public class Curso extends Produto {
     public Curso(Curso produto) {
         super(produto);
         this.livros = new ArrayList<Livro>();
-        this.disciplinas = new ArrayList<Disciplina>();
-
-        for (Disciplina disciplina : produto.disciplinas) {
-            this.addDisciplina(disciplina.clonar());
-        }
+        this.componentes = new ArrayList<IComponente>();
 
         for (Livro livro : produto.livros) {
             this.addLivro(livro.clonar());
         }
     }
 
-    public void addDisciplina(Disciplina disciplina) {
-        this.disciplinas.add(disciplina);
+    public void addComponente(IComponente componente) {
+        this.componentes.add(componente);
+    }
+
+    public void removeComponente(IComponente componente) {
+        this.componentes.remove(componente);
+    }
+
+    public Collection<Disciplina> getDisciplinas() {
+        return this.componentes.stream()
+            .filter(c -> c instanceof Disciplina)
+            .map(c -> (Disciplina)c)
+            .collect(Collectors.toList());
     }
 
     public void addLivro(Livro livro) {
@@ -46,59 +53,51 @@ public class Curso extends Produto {
 
     @Override
     public double getPreco() {
-        double precoDoCurso = 0;
-        
+        double precoDosLivros = 0;
         if (livros != null && livros.size() > 0) {
             for (Livro livro : livros) {
-                precoDoCurso += livro.getPreco();
+                precoDosLivros += livro.getPreco();
             }
         }
+        precoDosLivros *= 0.9;
         
-        if (disciplinas != null && disciplinas.size() > 0) {
-            for (Disciplina disciplina : disciplinas) {
-                precoDoCurso += disciplina.getPreco();
+        double precoDosComponentes = 0;
+        if (componentes != null && componentes.size() > 0) {
+            for (IComponente componente : componentes) {
+                precoDosComponentes += componente.getPreco();
             }
         }
+        precoDosComponentes *= 0.8;
 
-        return precoDoCurso * 1.1;
+        return precoDosLivros + precoDosComponentes;
     }
 
     public int getChTotal() {
         int chTotal = 0;
 
-        if (disciplinas != null && disciplinas.size() > 0) {
-            for (Disciplina disciplina : disciplinas) {
-                chTotal += disciplina.getChTotal();
+        if (componentes != null && componentes.size() > 0) {
+            for (IComponente componente : componentes) {
+                chTotal += componente.getChTotal();
             }
         }
 
         return chTotal;
     }
 
-    public double getPctCumprido() {
-        int chTotal = this.getChTotal();
-        double horasCumpridas = 0;
+    public int getCHCumprida() {
+        int chCumprida = 0;
 
-        if (disciplinas != null && disciplinas.size() > 0) {
-            for (Disciplina disciplina : disciplinas) {
-                horasCumpridas += (disciplina.getPctCumprido() * disciplina.getChTotal()) / 100;
-            }
-        } 
-
-        return horasCumpridas / chTotal * 100;
-    }
-
-    public void avancar(String codigoDisciplina, double percentual) {
-        if (disciplinas != null && disciplinas.size() > 0) {
-            for (Disciplina disciplina : disciplinas) {
-                if (disciplina.getCodigo().equalsIgnoreCase(codigoDisciplina)) {
-                    disciplina.avancar(percentual);
-                    return;
-                }
+        if (componentes != null && componentes.size() > 0) {
+            for (IComponente componente : componentes) {
+                chCumprida += componente.getCHCumprida();
             }
         }
 
-        throw new NoSuchElementException(codigoDisciplina);
+        return chCumprida;
+    }
+
+    public double getPctChCumprida() {
+        return (this.getCHCumprida() * 100) / this.getChTotal();
     }
     
     @Override
@@ -109,30 +108,6 @@ public class Curso extends Produto {
     @Override
     public String toString() {
         return "[Curso] [" + super.toString() + "]";
-    }
-
-    public String gerarRelatorioSimplificado() {
-        StringBuilder relatorio = new StringBuilder();
-
-        relatorio.append(this + "\n");
-        relatorio.append("CHTOTAL: " + this.getChTotal() + "\n");
-        relatorio.append("PROGRESSO: " + this.getPctCumprido() + "\n");
-
-        return relatorio.toString();
-    }
-
-    public String gerarRelatorioCompleto() {
-        StringBuilder relatorio = new StringBuilder();
-
-        relatorio.append(this + "\n");
-
-        for (Disciplina disciplina : this.disciplinas) {
-            relatorio.append(disciplina.getCodigo() + "\n\tCHTOTAL: " +
-                disciplina.getChTotal() + "\n\tPROGRESSO: " +
-                disciplina.getPctCumprido() + "\n");
-        }
-
-        return relatorio.toString();
     }
 
 }

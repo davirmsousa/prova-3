@@ -2,11 +2,12 @@ package questao1.builders;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import questao1.produtos.Disciplina;
+
+import questao1.composite.IComponente;
 import questao1.produtos.Livro;
 
 public abstract class CursoBaseBuilder<T> implements IBuilder<T> {
-	protected Collection<Disciplina> disciplinas;
+	protected Collection<IComponente> componentes;
 	protected Collection<Livro> livros;	
     protected String codigo;
 	protected String nome;
@@ -17,7 +18,7 @@ public abstract class CursoBaseBuilder<T> implements IBuilder<T> {
 
 	@Override
 	public IBuilder<T> resetar() {
-		this.disciplinas = new ArrayList<Disciplina>();
+		this.componentes = new ArrayList<IComponente>();
 		this.livros = new ArrayList<Livro>();	
 		this.codigo = "";
 		this.nome = "";
@@ -37,14 +38,14 @@ public abstract class CursoBaseBuilder<T> implements IBuilder<T> {
 	}
 
 	@Override
-	public IBuilder<T> addDisciplina(Disciplina disciplina) {
-		this.disciplinas.add(disciplina);
-		return this;
-	}
-	
-	@Override
 	public IBuilder<T> addLivro(Livro livro) {
 		this.livros.add(livro);
 		return this;
+	}
+
+	@Override
+	public IBuilder<T> addComponente(IComponente componente) {
+		this.componentes.add(componente);
+		return null;
 	}
 }

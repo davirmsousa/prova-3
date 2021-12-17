@@ -14,7 +14,7 @@ public class CursoBuilder extends CursoBaseBuilder<Curso> {
 
     @Override
     public Curso construir() {
-        return new Curso(this.codigo, this.nome, this.disciplinas, this.livros);
+        return new Curso(this.codigo, this.nome, this.livros, this.componentes);
     }
     
 }
